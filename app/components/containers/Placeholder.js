@@ -31,6 +31,10 @@ const styles = StyleSheet.create({
 
 
 class Placeholder extends Component {
+  static navigationOptions = {
+    title: 'Placeholder',
+  };
+
   render() {
     return (
       <View style={styles.container}>
