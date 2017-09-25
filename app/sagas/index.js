@@ -6,12 +6,13 @@ import {
 } from 'redux-saga/effects';
 import {
   Alert,
-} from 'react';
+} from 'react-native';
 import * as actions from '../actions';
 
 
 function* showAlert(action) {
-  yield call(Alert.alert, action.title, action.message);
+  const { title, message } = action.payload;
+  yield call(Alert.alert, title, message);
 }
 
 function* watchShowAlert() {
@@ -20,6 +21,6 @@ function* watchShowAlert() {
 
 export default function* sagas() {
   yield [
-    watchShowAlert,
+    watchShowAlert(),
   ];
 }

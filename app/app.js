@@ -12,7 +12,7 @@ import AppNavigator from './navigation';
 const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore(reducers, composeWithDevTools(
-  applyMiddleware(sagaMiddleware)
+  applyMiddleware(sagaMiddleware),
 ));
 
 sagaMiddleware.run(sagas);
