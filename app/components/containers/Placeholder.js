@@ -50,6 +50,7 @@ class Placeholder extends Component {
         </Text>
         <Text>Counter: {this.props.count}</Text>
         <Button title="Increment" onPress={() => this.props.increment()} />
+        <Button title="Show alert" onPress={() => this.props.showAlert()} />
       </View>
     );
   }
@@ -57,6 +58,7 @@ class Placeholder extends Component {
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   increment: () => dispatch(actions.incrementCounter()),
+  showAlert: () => dispatch(actions.showAlert({ title: 'Title', message: 'Message' })),
 });
 
 const mapStateToProps = (state, ownProps) => ({
