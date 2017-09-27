@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -38,6 +39,10 @@ const CellVariant = props => (
     }
   />
 );
+
+CellVariant.propTypes = {
+  title: PropTypes.string.isRequired,
+};
 
 
 class DefaultPage extends Component {
