@@ -6,11 +6,13 @@ import {
   View,
   Text,
 } from 'react-native';
+import { connect } from 'react-redux';
 import {
   TableView,
   Section,
   Cell,
 } from 'react-native-tableview-simple';
+import * as actions from '../../actions';
 
 
 const styles = StyleSheet.create({
@@ -55,13 +57,13 @@ class DefaultPage extends Component {
       <ScrollView style={styles.scrollView}>
         <TableView>
           <Section header="MEETING ROOM">
-            <CellVariant title="Search" onPress={() => this.props.navigation.navigate('Search')} accessory="DisclosureIndicator" />
-            <CellVariant title="Scan label" onPress={() => this.props.navigation.navigate('ScanLabel')} accessory="DisclosureIndicator" />
-            <CellVariant title="Lookup" onPress={() => this.props.navigation.navigate('Lookup')} accessory="DisclosureIndicator" />
+            <CellVariant title="Search" onPress={() => this.props.dispatch(actions.goToMeetingRoomSearch())} accessory="DisclosureIndicator" />
+            <CellVariant title="Scan label" onPress={() => this.props.dispatch(actions.goToMeetingRoomScanLabel())} accessory="DisclosureIndicator" />
+            <CellVariant title="Lookup" onPress={() => this.props.dispatch(actions.goToMeetingRoomLookup())} accessory="DisclosureIndicator" />
           </Section>
           <Section header="EQUIPMENT">
-            <CellVariant title="Scan label" onPress={() => this.props.navigation.navigate('ScanLabel')} accessory="DisclosureIndicator" />
-            <CellVariant title="Lookup" onPress={() => this.props.navigation.navigate('Lookup')} accessory="DisclosureIndicator" />
+            <CellVariant title="Scan label" onPress={() => this.props.dispatch(actions.goToEquipmentScanLabel())} accessory="DisclosureIndicator" />
+            <CellVariant title="Lookup" onPress={() => this.props.dispatch(actions.goToEquipmentLookup())} accessory="DisclosureIndicator" />
           </Section>
         </TableView>
       </ScrollView>
@@ -70,9 +72,7 @@ class DefaultPage extends Component {
 }
 
 DefaultPage.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
-export default DefaultPage;
+export default connect()(DefaultPage);
