@@ -51,7 +51,6 @@ class Placeholder extends Component {
         <Text>Counter: {this.props.count}</Text>
         <Button title="Increment" onPress={() => this.props.increment()} />
         <Button title="Show alert" onPress={() => this.props.showAlert()} />
-        <Button title="Navigate away" onPress={() => this.props.navigation.navigate('Away')} />
       </View>
     );
   }
