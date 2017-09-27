@@ -57,12 +57,12 @@ class Placeholder extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   increment: () => dispatch(actions.incrementCounter()),
   showAlert: () => dispatch(actions.showAlert({ title: 'Title', message: 'Message' })),
 });
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   count: getCount(state),
 });
 
