@@ -22,13 +22,14 @@ const styles = StyleSheet.create({
 
 const CellVariant = props => (
   <Cell
+    {...props}
     cellContentView={
       <View
         style={{ alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10 }}
       >
         <Text
           allowFontScaling
-          numberOfLines={2}
+          numberOfLines={1}
           style={{ fontSize: 17 }}
         >
           {props.title}
@@ -48,11 +49,14 @@ class DefaultPage extends Component {
     return (
       <ScrollView style={styles.scrollView}>
         <TableView>
-          <Section>
-            <CellVariant title="Element 1" />
-            <CellVariant title="Element 2" />
-            <CellVariant title="Element 3" />
-            <CellVariant title="Element 4" />
+          <Section header="MEETING ROOM">
+            <CellVariant title="Search" onPress={() => this.props.navigation.navigate('Search')} accessory="DisclosureIndicator" />
+            <CellVariant title="Scan label" onPress={() => this.props.navigation.navigate('ScanLabel')} accessory="DisclosureIndicator" />
+            <CellVariant title="Lookup" onPress={() => this.props.navigation.navigate('Lookup')} accessory="DisclosureIndicator" />
+          </Section>
+          <Section header="EQUIPMENT">
+            <CellVariant title="Scan label" onPress={() => this.props.navigation.navigate('ScanLabel')} accessory="DisclosureIndicator" />
+            <CellVariant title="Lookup" onPress={() => this.props.navigation.navigate('Lookup')} accessory="DisclosureIndicator" />
           </Section>
         </TableView>
       </ScrollView>
