@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -55,6 +56,12 @@ class Placeholder extends Component {
     );
   }
 }
+
+Placeholder.propTypes = {
+  count: PropTypes.number.isRequired,
+  increment: PropTypes.func.isRequired,
+  showAlert: PropTypes.func.isRequired,
+};
 
 const mapDispatchToProps = dispatch => ({
   increment: () => dispatch(actions.incrementCounter()),

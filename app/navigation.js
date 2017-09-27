@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { StackNavigator, addNavigationHelpers } from 'react-navigation';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -32,6 +33,11 @@ class App extends Component {
     );
   }
 }
+
+App.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  nav: PropTypes.object.isRequired,
+};
 
 const mapStateToProps = state => ({
   nav: state.nav,

@@ -69,4 +69,10 @@ class DefaultPage extends Component {
   }
 }
 
+DefaultPage.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
 export default DefaultPage;
