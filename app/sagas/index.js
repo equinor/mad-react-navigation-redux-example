@@ -30,33 +30,30 @@ function* watchGoToEquipmentScanLabel() {
   yield takeEvery(actions.goToEquipmentScanLabel, goToEquipmentScanLabel);
 }
 
-function* scanLabelPageWillAppear() {
-  const navigation = yield select(state => state.nav);
-  const isScanLabelPageFocused = navigation.routes[navigation.index].routeName === 'Home'; // TODO: Use a constant instead
+// TODO: Move previousRoute to store (by listening for PageNavigation/PAGE_WILL_APPEAR actions)
+// NOTE: This code assumes that an PageNavigation/PAGE_WILL_APPEAR action is sent when loading the initial page
+let previousRoute = null;
 
-  if (isScanLabelPageFocused) {
-    yield put(actions.scanLabelPageWillAppear());
+function* watchPageNavigation() {
+  while (true) {
+    yield take(action => action.type.startsWith('Navigation/'));
+
+    const navigation = yield select(state => state.nav);
+    const currentRoute = navigation.routes[navigation.index].routeName;
+
+    if (previousRoute !== currentRoute) {
+      yield put(actions.pageNavigationPageWillDisappear(previousRoute));
+      yield put(actions.pageNavigationPageWillAppear(currentRoute));
+
+      previousRoute = currentRoute;
+    }
   }
-}
-
-function* watchScanLabelPageWillAppear() {
-  yield takeEvery(action => action.type.startsWith('Navigation/'), scanLabelPageWillAppear);
-}
-
-function* scanLabelPageWillDisappear() {
-  yield take(action => action.type.startsWith('Navigation/'));
-  yield put(actions.scanLabelPageWillDisappear());
-}
-
-function* watchScanLabelPageWillDisappear() {
-  yield takeEvery(actions.scanLabelPageWillAppear.toString(), scanLabelPageWillDisappear);
 }
 
 export default function* sagas() {
   yield [
     watchShowAlert(),
     watchGoToEquipmentScanLabel(),
-    watchScanLabelPageWillAppear(),
-    watchScanLabelPageWillDisappear(),
+    watchPageNavigation(),
   ];
 }

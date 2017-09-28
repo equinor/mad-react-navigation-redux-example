@@ -14,5 +14,6 @@ export const goToMeetingRoomLookup = createAction('goToMeetingRoomLookup');
 export const goToEquipmentScanLabel = createAction('goToEquipmentScanLabel');
 export const goToEquipmentLookup = createAction('goToEquipmentLookup');
 
-export const scanLabelPageWillAppear = createAction('scanLabelPageWillAppear');
-export const scanLabelPageWillDisappear = createAction('scanLabelPageWillDisappear');
+
+export const pageNavigationPageWillAppear = createAction('PageNavigation/PAGE_WILL_APPEAR');
+export const pageNavigationPageWillDisappear = createAction('PageNavigation/PAGE_WILL_DISAPPEAR');
