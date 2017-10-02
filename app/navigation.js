@@ -3,14 +3,18 @@ import { StackNavigator, addNavigationHelpers } from 'react-navigation';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import DefaultPage from './components/containers/DefaultPage';
-import Placeholder from './components/containers/Placeholder';
-import SecondPlaceholder from './components/containers/SecondPlaceholder';
+import SearchMeetingRoomPage from './components/containers/SearchMeetingRoomPage';
+import ScanLabelPage from './components/containers/ScanLabelPage';
+import LookupLabelPage from './components/containers/LookupLabelPage';
+import ReportMeetingRoomPage from './components/containers/ReportMeetingRoomPage';
 
 
 const AppNavigator = StackNavigator({
   Default: { screen: DefaultPage },
-  Home: { screen: Placeholder },
-  Away: { screen: SecondPlaceholder },
+  SearchMeetingRoom: { screen: SearchMeetingRoomPage },
+  ScanLabel: { screen: ScanLabelPage },
+  LookupLabel: { screen: LookupLabelPage },
+  ReportMeetingRoom: { screen: ReportMeetingRoomPage },
 });
 
 const initialState = AppNavigator.router.getStateForAction(AppNavigator.router.getActionForPathAndParams('Default'));

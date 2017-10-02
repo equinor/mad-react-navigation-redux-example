@@ -52,27 +52,27 @@ class DefaultPage extends Component {
     title: 'PleaseFix',
   };
 
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired,
+  };
+
   render() {
     return (
       <ScrollView style={styles.scrollView}>
         <TableView>
           <Section header="MEETING ROOM">
-            <CellVariant title="Search" onPress={() => this.props.dispatch(actions.goToMeetingRoomSearch())} accessory="DisclosureIndicator" />
+            <CellVariant title="Search meeting room" onPress={() => this.props.dispatch(actions.goToMeetingRoomSearch())} accessory="DisclosureIndicator" />
             <CellVariant title="Scan label" onPress={() => this.props.dispatch(actions.goToMeetingRoomScanLabel())} accessory="DisclosureIndicator" />
-            <CellVariant title="Lookup" onPress={() => this.props.dispatch(actions.goToMeetingRoomLookup())} accessory="DisclosureIndicator" />
+            <CellVariant title="Lookup label" onPress={() => this.props.dispatch(actions.goToMeetingRoomLookupLabel())} accessory="DisclosureIndicator" />
           </Section>
           <Section header="EQUIPMENT">
             <CellVariant title="Scan label" onPress={() => this.props.dispatch(actions.goToEquipmentScanLabel())} accessory="DisclosureIndicator" />
-            <CellVariant title="Lookup" onPress={() => this.props.dispatch(actions.goToEquipmentLookup())} accessory="DisclosureIndicator" />
+            <CellVariant title="Lookup label" onPress={() => this.props.dispatch(actions.goToEquipmentLookupLabel())} accessory="DisclosureIndicator" />
           </Section>
         </TableView>
       </ScrollView>
     );
   }
 }
-
-DefaultPage.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-};
 
 export default connect()(DefaultPage);

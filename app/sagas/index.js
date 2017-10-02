@@ -3,8 +3,8 @@ import {
   put,
   take,
   takeEvery,
-  takeLatest,
   select,
+  race,
 } from 'redux-saga/effects';
 import {
   Alert,
@@ -22,16 +22,113 @@ function* watchShowAlert() {
   yield takeEvery(actions.showAlert.toString(), showAlert);
 }
 
-function* goToEquipmentScanLabel() {
-  yield put(NavigationActions.navigate({ routeName: 'Home' })); // TODO: Use a constant instead
+// DefaultPage
+
+function* goToMeetingRoomSearch() {
+  yield put(NavigationActions.navigate({ routeName: 'SearchMeetingRoom' })); // TODO: Use a constant instead
 }
 
-function* watchGoToEquipmentScanLabel() {
-  yield takeEvery(actions.goToEquipmentScanLabel, goToEquipmentScanLabel);
+function* goToMeetingRoomScanLabel() {
+  yield put(NavigationActions.navigate({ routeName: 'ScanLabel' })); // TODO: Use a constant instead
+
+  const action = yield take(actions.labelRecognized);
+  const label = action.payload.label;
+
+  yield put(NavigationActions.navigate({ routeName: 'MeetingRoom', params: { label } })); // TODO: Use a constant instead
 }
+
+
+function* showLookupLabel() {
+  yield put(NavigationActions.navigate({ routeName: 'LookupLabel' })); // TODO: Use a constant instead
+}
+
+function* waitForLookupLabel() {
+  const { proceed } = yield race({
+    proceed: take(actions.lookupLabel),
+    back: take(NavigationActions.BACK),
+  });
+
+  if (proceed) {
+    return { label: proceed.payload.label };
+  }
+
+  return { back: true };
+}
+
+function* showSearchMeetingRoom() {
+  yield put(NavigationActions.navigate({ routeName: 'SearchMeetingRoom' }));
+}
+
+function* waitForSearchMeetingRoom() {
+  const { proceed } = yield race({
+    proceed: take(actions.searchMeetingRoom),
+    back: take(NavigationActions.BACK),
+  });
+
+  if (proceed) {
+    return { meetingRoom: proceed.payload.meetingRoom };
+  }
+
+  return { back: true };
+}
+
+function* showReportMeetingRoom(meetingRoom, label) {
+  yield put(NavigationActions.navigate({ routeName: 'ReportMeetingRoom', params: { meetingRoom, label } }));
+}
+
+function* waitForReportMeetingRoom() {
+  const { proceed } = yield race({
+    proceed: take(actions.report),
+    back: take(NavigationActions.BACK),
+  });
+
+  if (proceed) {
+    return { report: 'REPORTED' }; // TODO: Implement
+  }
+
+  return { back: true };
+}
+
+function* goToMeetingRoomLookupLabel() {
+  yield showLookupLabel();
+  while (true) {
+    const { label, back } = yield waitForLookupLabel();
+    if (back) { break; }
+
+    yield showSearchMeetingRoom();
+    while (true) {
+      const { meetingRoom, back: back2 } = yield waitForSearchMeetingRoom();
+      if (back2) { break; }
+
+      yield showReportMeetingRoom(meetingRoom, label);
+      while (true) {
+        const { back: back3 } = yield waitForReportMeetingRoom();
+        if (back3) { break; }
+
+        yield call(console.log, 'COMPLETED');
+      }
+    }
+  }
+}
+
+
+function* watchGoToMeetingRoomSearch() {
+  yield takeEvery(actions.goToMeetingRoomSearch, goToMeetingRoomSearch);
+}
+
+function* watchGoToMeetingRoomScanLabel() {
+  yield takeEvery(actions.goToMeetingRoomScanLabel, goToMeetingRoomScanLabel);
+}
+
+function* watchGoToMeetingRoomLookupLabel() {
+  yield takeEvery(actions.goToMeetingRoomLookupLabel, goToMeetingRoomLookupLabel);
+}
+
+// Navigation
 
 // TODO: Move previousRoute to store (by listening for PageNavigation/PAGE_WILL_APPEAR actions)
-// NOTE: This code assumes that an PageNavigation/PAGE_WILL_APPEAR action is sent when loading the initial page
+// NOTE: This code assumes that an PageNavigation/PAGE_WILL_APPEAR action is sent when loading
+// the initial page
 let previousRoute = null;
 
 function* watchPageNavigation() {
@@ -53,7 +150,9 @@ function* watchPageNavigation() {
 export default function* sagas() {
   yield [
     watchShowAlert(),
-    watchGoToEquipmentScanLabel(),
+    watchGoToMeetingRoomSearch(),
+    watchGoToMeetingRoomScanLabel(),
+    watchGoToMeetingRoomLookupLabel(),
     watchPageNavigation(),
   ];
 }

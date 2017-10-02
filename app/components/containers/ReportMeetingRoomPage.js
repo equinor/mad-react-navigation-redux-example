@@ -31,14 +31,27 @@ const styles = StyleSheet.create({
 });
 
 
-class Placeholder extends Component {
+class MeetingRoomPage extends Component {
   static navigationOptions = {
-    title: 'Placeholder',
+    title: 'Meeting room',
+  };
+
+  static propTypes = {
+    label: PropTypes.string.isRequired,
+    meetingRoom: PropTypes.string.isRequired,
+    count: PropTypes.number.isRequired,
+    increment: PropTypes.func.isRequired,
+    showAlert: PropTypes.func.isRequired,
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func.isRequired,
+    }).isRequired,
   };
 
   render() {
     return (
       <View style={styles.container}>
+        <Text>Label: {this.props.label}</Text>
+        <Text>Meeting room: {this.props.meetingRoom}</Text>
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
@@ -58,19 +71,15 @@ class Placeholder extends Component {
   }
 }
 
-Placeholder.propTypes = {
-  count: PropTypes.number.isRequired,
-  increment: PropTypes.func.isRequired,
-  showAlert: PropTypes.func.isRequired,
-};
-
 const mapDispatchToProps = dispatch => ({
   increment: () => dispatch(actions.incrementCounter()),
   showAlert: () => dispatch(actions.showAlert({ title: 'Title', message: 'Message' })),
 });
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
+  label: (ownProps.navigation.state.params || {}).label || '',
+  meetingRoom: (ownProps.navigation.state.params || {}).meetingRoom || '',
   count: getCount(state),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Placeholder);
+export default connect(mapStateToProps, mapDispatchToProps)(MeetingRoomPage);
