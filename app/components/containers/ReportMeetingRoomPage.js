@@ -28,6 +28,7 @@ class MeetingRoomPage extends Component {
   static propTypes = {
     label: PropTypes.string.isRequired,
     meetingRoom: PropTypes.string.isRequired,
+    report: PropTypes.func.isRequired,
   };
 
   render() {
@@ -45,9 +46,16 @@ const mapDispatchToProps = dispatch => ({
   report: () => dispatch(actions.report()),
 });
 
-const mapStateToProps = (state, ownProps) => ({
-  label: (ownProps.navigation.state.params || {}).label || '',
-  meetingRoom: (ownProps.navigation.state.params || {}).meetingRoom || '',
-});
+const mapStateToProps = (state, ownProps) => {
+  const {
+    label,
+    meetingRoom,
+  } = ownProps.navigation.state.params;
+
+  return {
+    label,
+    meetingRoom,
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(MeetingRoomPage);
