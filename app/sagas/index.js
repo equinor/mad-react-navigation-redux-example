@@ -95,7 +95,9 @@ function* retryOnBack(actionGenerator, callback) {
 
     if (back) { break; }
 
-    yield callback(result);
+    const shouldBreak = yield callback(result);
+
+    if (shouldBreak) { break; }
   }
 }
 
@@ -110,6 +112,8 @@ function* goToMeetingRoomLookupLabel() {
 
       yield retryOnBack(waitForReportMeetingRoom, function* step3() {
         yield call(console.log, 'COMPLETED');
+
+        return true;
       });
     });
   });
