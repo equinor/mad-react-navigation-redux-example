@@ -49,7 +49,7 @@ function* waitForLookupLabel() {
   });
 
   if (proceed) {
-    return { label: proceed.payload.label };
+    return { result: proceed.payload.label };
   }
 
   return { back: true };
@@ -66,7 +66,7 @@ function* waitForSearchMeetingRoom() {
   });
 
   if (proceed) {
-    return { meetingRoom: proceed.payload.meetingRoom };
+    return { result: proceed.payload.meetingRoom };
   }
 
   return { back: true };
@@ -83,32 +83,36 @@ function* waitForReportMeetingRoom() {
   });
 
   if (proceed) {
-    return { report: 'REPORTED' }; // TODO: Implement
+    return { result: 'REPORTED' }; // TODO: Implement
   }
 
   return { back: true };
 }
 
-function* goToMeetingRoomLookupLabel() {
-  yield showLookupLabel();
+function* retryOnBack(actionGenerator, callback) {
   while (true) {
-    const { label, back } = yield waitForLookupLabel();
+    const { result, back } = yield actionGenerator();
+
     if (back) { break; }
 
-    yield showSearchMeetingRoom();
-    while (true) {
-      const { meetingRoom, back: back2 } = yield waitForSearchMeetingRoom();
-      if (back2) { break; }
-
-      yield showReportMeetingRoom(meetingRoom, label);
-      while (true) {
-        const { back: back3 } = yield waitForReportMeetingRoom();
-        if (back3) { break; }
-
-        yield call(console.log, 'COMPLETED');
-      }
-    }
+    yield callback(result);
   }
+}
+
+function* goToMeetingRoomLookupLabel() {
+  yield showLookupLabel();
+
+  yield retryOnBack(waitForLookupLabel, function* step1(label) {
+    yield showSearchMeetingRoom();
+
+    yield retryOnBack(waitForSearchMeetingRoom, function* step2(meetingRoom) {
+      yield showReportMeetingRoom(meetingRoom, label);
+
+      yield retryOnBack(waitForReportMeetingRoom, function* step3() {
+        yield call(console.log, 'COMPLETED');
+      });
+    });
+  });
 }
 
 
