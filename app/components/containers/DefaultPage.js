@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import RoundedSquareIcon from '../atoms/RoundedSquareIcon';
 import BasicCell from '../atoms/BasicCell';
+import * as colors from '../../stylesheets/colors';
 import * as actions from '../../actions';
 
 
@@ -41,19 +42,19 @@ class DefaultPage extends Component {
         <TableView>
           <Section header="MEETING ROOM" separatorInsetLeft={separatorInsetLeft}>
             <BasicCell
-              cellImageView={<RoundedSquareIcon backgroundColor="gray" icon={<Icon name="ios-pin" size={17} color="white" />} style={{ marginRight: 10 }} />}
+              cellImageView={<RoundedSquareIcon backgroundColor={colors.PINK} icon={<Icon name="ios-pin" size={17} color="white" />} style={{ marginRight: 10 }} />}
               title="Search meeting room"
               onPress={() => this.props.dispatch(actions.goToMeetingRoomSearch())}
               accessory="DisclosureIndicator"
             />
             <BasicCell
-              cellImageView={<RoundedSquareIcon backgroundColor="gray" icon={<Icon name="md-camera" size={17} color="white" />} style={{ marginRight: 10 }} />}
+              cellImageView={<RoundedSquareIcon backgroundColor={colors.PINK} icon={<Icon name="md-camera" size={17} color="white" />} style={{ marginRight: 10 }} />}
               title="Scan yellow label"
               onPress={() => this.props.dispatch(actions.goToMeetingRoomScanLabel())}
               accessory="DisclosureIndicator"
             />
             <BasicCell
-              cellImageView={<RoundedSquareIcon backgroundColor="gray" icon={<MIcon name="label-outline" size={17} color="white" />} style={{ marginRight: 10 }} />}
+              cellImageView={<RoundedSquareIcon backgroundColor={colors.PINK} icon={<MIcon name="label-outline" size={17} color="white" />} style={{ marginRight: 10 }} />}
               title="Look up yellow label"
               onPress={() => this.props.dispatch(actions.goToMeetingRoomLookupLabel())}
               accessory="DisclosureIndicator"
@@ -61,13 +62,13 @@ class DefaultPage extends Component {
           </Section>
           <Section header="EQUIPMENT" separatorInsetLeft={separatorInsetLeft}>
             <BasicCell
-              cellImageView={<RoundedSquareIcon backgroundColor="gray" icon={<Icon name="md-camera" size={17} color="white" />} style={{ marginRight: 10 }} />}
+              cellImageView={<RoundedSquareIcon backgroundColor={colors.PINK} icon={<Icon name="md-camera" size={17} color="white" />} style={{ marginRight: 10 }} />}
               title="Scan yellow label"
               onPress={() => this.props.dispatch(actions.goToEquipmentScanLabel())}
               accessory="DisclosureIndicator"
             />
             <BasicCell
-              cellImageView={<RoundedSquareIcon backgroundColor="gray" icon={<MIcon name="label-outline" size={17} color="white" />} style={{ marginRight: 10 }} />}
+              cellImageView={<RoundedSquareIcon backgroundColor={colors.PINK} icon={<MIcon name="label-outline" size={17} color="white" />} style={{ marginRight: 10 }} />}
               title="Look up yellow label"
               onPress={() => this.props.dispatch(actions.goToEquipmentLookupLabel())}
               accessory="DisclosureIndicator"
