@@ -35,13 +35,33 @@ class DefaultPage extends Component {
       <ScrollView style={styles.scrollView}>
         <TableView>
           <Section header="MEETING ROOM">
-            <BasicCell title="Search meeting room" onPress={() => this.props.dispatch(actions.goToMeetingRoomSearch())} accessory="DisclosureIndicator" />
-            <BasicCell title="Scan yellow label" onPress={() => this.props.dispatch(actions.goToMeetingRoomScanLabel())} accessory="DisclosureIndicator" />
-            <BasicCell title="Look up yellow label" onPress={() => this.props.dispatch(actions.goToMeetingRoomLookupLabel())} accessory="DisclosureIndicator" />
+            <BasicCell
+              title="Search meeting room"
+              onPress={() => this.props.dispatch(actions.goToMeetingRoomSearch())}
+              accessory="DisclosureIndicator"
+            />
+            <BasicCell
+              title="Scan yellow label"
+              onPress={() => this.props.dispatch(actions.goToMeetingRoomScanLabel())}
+              accessory="DisclosureIndicator"
+            />
+            <BasicCell
+              title="Look up yellow label"
+              onPress={() => this.props.dispatch(actions.goToMeetingRoomLookupLabel())}
+              accessory="DisclosureIndicator"
+            />
           </Section>
           <Section header="EQUIPMENT">
-            <BasicCell title="Scan yellow label" onPress={() => this.props.dispatch(actions.goToEquipmentScanLabel())} accessory="DisclosureIndicator" />
-            <BasicCell title="Look up yellow label" onPress={() => this.props.dispatch(actions.goToEquipmentLookupLabel())} accessory="DisclosureIndicator" />
+            <BasicCell
+              title="Scan yellow label"
+              onPress={() => this.props.dispatch(actions.goToEquipmentScanLabel())}
+              accessory="DisclosureIndicator"
+            />
+            <BasicCell
+              title="Look up yellow label"
+              onPress={() => this.props.dispatch(actions.goToEquipmentLookupLabel())}
+              accessory="DisclosureIndicator"
+            />
           </Section>
         </TableView>
       </ScrollView>
