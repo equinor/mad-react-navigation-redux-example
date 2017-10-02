@@ -3,6 +3,7 @@ import {
   put,
   take,
   takeEvery,
+  takeLatest,
   select,
   race,
 } from 'redux-saga/effects';
@@ -11,6 +12,7 @@ import {
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import * as actions from '../actions';
+import * as Api from '../services/api';
 
 
 function* showAlert(action) {
@@ -61,7 +63,7 @@ function* showSearchMeetingRoom() {
 
 function* waitForSearchMeetingRoom() {
   const { proceed } = yield race({
-    proceed: take(actions.searchMeetingRoom),
+    proceed: take(actions.searchMeetingRoomSelected),
     back: take(NavigationActions.BACK),
   });
 
@@ -102,21 +104,25 @@ function* retryOnBack(actionGenerator, callback) {
 }
 
 function* goToMeetingRoomLookupLabel() {
-  yield showLookupLabel();
+  try {
+    yield showLookupLabel();
 
-  yield retryOnBack(waitForLookupLabel, function* step1(label) {
-    yield showSearchMeetingRoom();
+    yield retryOnBack(waitForLookupLabel, function* step1(label) {
+      yield showSearchMeetingRoom();
 
-    yield retryOnBack(waitForSearchMeetingRoom, function* step2(meetingRoom) {
-      yield showReportMeetingRoom(meetingRoom, label);
+      yield retryOnBack(waitForSearchMeetingRoom, function* step2(meetingRoom) {
+        yield showReportMeetingRoom(meetingRoom, label);
 
-      yield retryOnBack(waitForReportMeetingRoom, function* step3() {
-        yield call(console.log, 'COMPLETED');
+        yield retryOnBack(waitForReportMeetingRoom, function* step3() {
+          yield call(console.log, 'COMPLETED');
 
-        return true;
+          return true;
+        });
       });
     });
-  });
+  } finally {
+    yield put(actions.searchMeetingRoomTextClear());
+  }
 }
 
 
@@ -130,6 +136,18 @@ function* watchGoToMeetingRoomScanLabel() {
 
 function* watchGoToMeetingRoomLookupLabel() {
   yield takeEvery(actions.goToMeetingRoomLookupLabel, goToMeetingRoomLookupLabel);
+}
+
+// Search
+
+function* searchMeetingRoomTextChanged(action) {
+  const { searchTerm } = action.payload;
+  const meetingRooms = yield call(Api.getMeetingRooms, searchTerm);
+  yield put(actions.searchMeetingRoomListUpdated({ meetingRooms }));
+}
+
+function* watchSearchMeetingRoomTextChanged() {
+  yield takeLatest(actions.searchMeetingRoomTextChanged.toString(), searchMeetingRoomTextChanged);
 }
 
 // Navigation
@@ -161,6 +179,7 @@ export default function* sagas() {
     watchGoToMeetingRoomSearch(),
     watchGoToMeetingRoomScanLabel(),
     watchGoToMeetingRoomLookupLabel(),
+    watchSearchMeetingRoomTextChanged(),
     watchPageNavigation(),
   ];
 }

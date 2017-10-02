@@ -12,7 +12,10 @@ export const goToEquipmentScanLabel = createAction('goToEquipmentScanLabel');
 export const goToEquipmentLookupLabel = createAction('goToEquipmentLookupLabel');
 
 // Search
-export const searchMeetingRoom = createAction('searchMeetingRoom');
+export const searchMeetingRoomTextChanged = createAction('searchMeetingRoomTextChanged');
+export const searchMeetingRoomTextClear = createAction('searchMeetingRoomTextClear');
+export const searchMeetingRoomListUpdated = createAction('searchMeetingRoomListUpdated');
+export const searchMeetingRoomSelected = createAction('searchMeetingRoomSelected');
 
 // Scan
 export const labelRecognized = createAction('labelRecognized');

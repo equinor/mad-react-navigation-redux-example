@@ -5,16 +5,16 @@ import {
   ScrollView,
   View,
   TextInput,
-  Button,
   KeyboardAvoidingView,
 } from 'react-native';
 import {
   TableView,
   Section,
 } from 'react-native-tableview-simple';
-import BasicCell from '../atoms/BasicCell';
 import { connect } from 'react-redux';
+import BasicCell from '../atoms/BasicCell';
 import * as actions from '../../actions';
+import { getMeetingRooms } from '../../reducers/searchMeetingRoom';
 
 
 const styles = StyleSheet.create({
@@ -47,7 +47,9 @@ class SearchMeetingRoomPage extends Component {
   };
 
   static propTypes = {
-    searchMeetingRoom: PropTypes.func.isRequired,
+    meetingRooms: PropTypes.array.isRequired,
+    searchMeetingRoomTextChanged: PropTypes.func.isRequired,
+    searchMeetingRoomSelected: PropTypes.func.isRequired,
   };
 
   render() {
@@ -56,18 +58,27 @@ class SearchMeetingRoomPage extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.searchBarContainer}>
-          <TextInput autoFocus placeholder="Search for meeting room" onChangeText={(text) => {}} style={styles.searchBar} />
+          <TextInput
+            autoFocus
+            placeholder="Search for meeting room"
+            onChangeText={text => this.props.searchMeetingRoomTextChanged(text)}
+            style={styles.searchBar}
+          />
         </View>
         <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={titlebarHeight} style={styles.keyboardAvoidingView}>
           <ScrollView keyboardShouldPersistTaps="handled" style={styles.scrollView}>
             <TableView>
               <Section sectionPaddingTop={0} sectionPaddingBottom={0}>
-                <BasicCell title="Search meeting room" onPress={() => this.props.searchMeetingRoom('SEARCHED')} accessory="DisclosureIndicator" />
-                <BasicCell title="Last" onPress={() => console.log('test')} accessory="DisclosureIndicator" />
+                {this.props.meetingRooms.map(meetingRoom => (
+                  <BasicCell
+                    key={meetingRoom.id}
+                    title={meetingRoom.title}
+                    onPress={() => this.props.searchMeetingRoomSelected(meetingRoom.id)}
+                    accessory="DisclosureIndicator"
+                  />
+                ))}
               </Section>
             </TableView>
-            <Button title="Search meeting room: L123" onPress={() => this.props.searchMeetingRoom('L123')} />
-            <Button title="Search meeting room: L567" onPress={() => this.props.searchMeetingRoom('L567')} />
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
@@ -75,8 +86,13 @@ class SearchMeetingRoomPage extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  searchMeetingRoom: meetingRoom => dispatch(actions.searchMeetingRoom({ meetingRoom })),
+const mapStateToProps = state => ({
+  meetingRooms: getMeetingRooms(state),
 });
 
-export default connect(null, mapDispatchToProps)(SearchMeetingRoomPage);
+const mapDispatchToProps = dispatch => ({
+  searchMeetingRoomTextChanged: searchTerm => dispatch(actions.searchMeetingRoomTextChanged({ searchTerm })),
+  searchMeetingRoomSelected: meetingRoom => dispatch(actions.searchMeetingRoomSelected({ meetingRoom })),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchMeetingRoomPage);
