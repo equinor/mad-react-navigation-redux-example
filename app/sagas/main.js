@@ -15,7 +15,7 @@ import * as actions from '../actions';
 // Boilerplate
 
 function* showLookupLabel() {
-  yield put(NavigationActions.navigate({ routeName: 'LookupLabel' })); // TODO: Use a constant instead
+  yield put(NavigationActions.navigate({ routeName: 'LookupLabel' }));
 }
 
 function* showSearchMeetingRoom() {
@@ -90,16 +90,16 @@ function* askToSearchForMeetingRoom(okGen, cancelGen) {
 // Scenarios
 
 function* goToMeetingRoomSearch() {
-  yield put(NavigationActions.navigate({ routeName: 'SearchMeetingRoom' })); // TODO: Use a constant instead
+  yield put(NavigationActions.navigate({ routeName: 'SearchMeetingRoom' }));
 }
 
 function* goToMeetingRoomScanLabel() {
-  yield put(NavigationActions.navigate({ routeName: 'ScanLabel' })); // TODO: Use a constant instead
+  yield put(NavigationActions.navigate({ routeName: 'ScanLabel' }));
 
   const action = yield take(actions.labelRecognized);
   const label = action.payload.label;
 
-  yield put(NavigationActions.navigate({ routeName: 'MeetingRoom', params: { label } })); // TODO: Use a constant instead
+  yield put(NavigationActions.navigate({ routeName: 'MeetingRoom', params: { label } }));
 }
 
 function* goToMeetingRoomLookupLabel() {
