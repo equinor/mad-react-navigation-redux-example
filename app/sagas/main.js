@@ -1,3 +1,8 @@
+/* eslint func-names: 0 */
+/* eslint no-unused-vars: 0 */
+/* eslint no-use-before-define: 0 */
+/* eslint camelcase: 0 */
+
 import {
   call,
   put,
@@ -88,26 +93,132 @@ function* retryOnBack(actionGenerator, callback) {
   }
 }
 
-function* goToMeetingRoomLookupLabel() {
-  try {
-    yield showLookupLabel();
+// function* goToMeetingRoomLookupLabel() {
+//   try {
+//     yield showLookupLabel();
+//
+//     yield retryOnBack(waitForLookupLabel, function* step1(label) {
+//       yield showSearchMeetingRoom();
+//
+//       yield retryOnBack(waitForSearchMeetingRoom, function* step2(meetingRoom) {
+//         yield showReportMeetingRoom(meetingRoom, label);
+//
+//         yield retryOnBack(waitForReportMeetingRoom, function* step3() {
+//           yield call(console.log, 'COMPLETED');
+//
+//           return true;
+//         });
+//       });
+//     });
+//   } finally {
+//     yield put(actions.searchMeetingRoomTextClear());
+//   }
+// }
 
-    yield retryOnBack(waitForLookupLabel, function* step1(label) {
+// function* waitForLookupLabelActions(proceedFn, backFn = () => {}) {
+//   const { proceed, back } = yield race({
+//     proceed: take(actions.lookupLabel),
+//     back: take(NavigationActions.BACK),
+//   });
+//
+//   if (proceed) {
+//     yield proceedFn(proceed.payload.label);
+//   } else {
+//     yield backFn();
+//   }
+// }
+//
+// function* waitForSearchMeetingRoomActions(proceedFn, backFn = () => {}) {
+//   const { proceed, back } = yield race({
+//     proceed: take(actions.searchMeetingRoomSelected),
+//     back: take(NavigationActions.BACK),
+//   });
+//
+//   if (proceed) {
+//     yield proceedFn(proceed.payload.meetingRoom);
+//   } else {
+//     yield backFn();
+//   }
+// }
+//
+//
+// function* goToMeetingRoomLookupLabel() {
+//   yield showLookupLabel();
+//
+//   yield handleLookupLabel();
+// }
+//
+// function* handleLookupLabel() {
+//   yield waitForLookupLabelActions(function* (label) {
+//     yield showSearchMeetingRoom();
+//
+//     yield handleReportMeetingRoom(label);
+//   }, function* () {
+//     // Do nothing
+//   });
+// }
+//
+// function* handleReportMeetingRoom(label) { // TODO: Remove label
+//   yield waitForSearchMeetingRoomActions(function* (meetingRoom) {
+//     yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label}`);
+//   }, function* () {
+//     yield handleLookupLabel();
+//   });
+// }
+//
+// function* handleReportMeetingRoom(label) { // TODO: Remove label
+//   yield waitForSearchMeetingRoomActions(function* (meetingRoom) {
+//     yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label}`);
+//   }, function* () {
+//     yield handleLookupLabel();
+//   });
+// }
+
+function* waitForLookupLabelActions() {
+  const { proceed } = yield race({
+    proceed: take(actions.lookupLabel),
+    back: take(NavigationActions.BACK),
+  });
+
+  if (proceed) {
+    return { label: proceed.payload.label };
+  }
+
+  return { lookupLabelBack: true };
+}
+
+function* waitForSearchMeetingRoomActions() {
+  const { proceed } = yield race({
+    proceed: take(actions.searchMeetingRoomSelected),
+    back: take(NavigationActions.BACK),
+  });
+
+  if (proceed) {
+    return { meetingRoom: proceed.payload.meetingRoom };
+  }
+
+  return { meetingRoomBack: true };
+}
+
+function* goToMeetingRoomLookupLabel() {
+  yield showLookupLabel();
+
+  yield (function* handleLookupLabel() {
+    const { label } = yield waitForLookupLabelActions();
+    if (label) {
       yield showSearchMeetingRoom();
 
-      yield retryOnBack(waitForSearchMeetingRoom, function* step2(meetingRoom) {
-        yield showReportMeetingRoom(meetingRoom, label);
+      yield (function* handleReportMeetingRoom() {
+        const { meetingRoom, reportMeetingRoomBack } = yield waitForSearchMeetingRoomActions();
 
-        yield retryOnBack(waitForReportMeetingRoom, function* step3() {
-          yield call(console.log, 'COMPLETED');
-
-          return true;
-        });
-      });
-    });
-  } finally {
-    yield put(actions.searchMeetingRoomTextClear());
-  }
+        if (meetingRoom) {
+          yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label}`);
+        } else if (reportMeetingRoomBack) {
+          yield handleLookupLabel();
+        }
+      }());
+    }
+  }());
 }
 
 
