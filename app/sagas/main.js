@@ -5,6 +5,9 @@ import {
   takeEvery,
   race,
 } from 'redux-saga/effects';
+import {
+  Alert,
+} from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import * as actions from '../actions';
 
@@ -63,6 +66,26 @@ function* waitForReportMeetingRoomActions() {
   return { reportMeetingRoomBack: true };
 }
 
+function* askToSearchForMeetingRoom(okGen, cancelGen) {
+  const result = yield new Promise((resolve) => {
+    Alert.alert(
+      'Equipment is not connected to a meeting room',
+      'Do you want to search for a meeting room?',
+      [
+        { text: 'No', onPress: () => resolve(false), style: 'cancel' },
+        { text: 'Yes', onPress: () => resolve(true) },
+      ],
+      { cancelable: false },
+    );
+  });
+
+  if (result) {
+    yield okGen();
+  } else {
+    yield cancelGen();
+  }
+}
+
 
 // Scenarios
 
@@ -86,21 +109,25 @@ function* goToMeetingRoomLookupLabel() {
     const { label, lookupLabelBack } = yield waitForLookupLabelActions();
     if (lookupLabelBack) { return; }
 
-    yield showSearchMeetingRoom();
+    yield askToSearchForMeetingRoom(function* ok() {
+      yield showSearchMeetingRoom();
 
-    yield (function* handleSearchMeetingRoom() {
-      const { meetingRoom, searchMeetingRoomBack } = yield waitForSearchMeetingRoomActions();
-      if (searchMeetingRoomBack) { yield handleLookupLabel(); return; }
+      yield (function* handleSearchMeetingRoom() {
+        const { meetingRoom, searchMeetingRoomBack } = yield waitForSearchMeetingRoomActions();
+        if (searchMeetingRoomBack) { yield handleLookupLabel(); return; }
 
-      yield showReportMeetingRoom(meetingRoom, label);
+        yield showReportMeetingRoom(meetingRoom, label);
 
-      yield (function* handleReportMeetingRoom() {
-        const { completed, reportMeetingRoomBack } = yield waitForReportMeetingRoomActions();
-        if (reportMeetingRoomBack) { yield handleSearchMeetingRoom(); return; }
+        yield (function* handleReportMeetingRoom() {
+          const { completed, reportMeetingRoomBack } = yield waitForReportMeetingRoomActions();
+          if (reportMeetingRoomBack) { yield handleSearchMeetingRoom(); return; }
 
-        yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
+          yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
+        }());
       }());
-    }());
+    }, function* cancel() {
+      yield handleLookupLabel();
+    });
   }());
 }
 
