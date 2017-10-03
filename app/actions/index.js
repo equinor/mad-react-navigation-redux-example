@@ -25,9 +25,3 @@ export const lookupLabel = createAction('lookupLabel');
 
 // Report
 export const report = createAction('report');
-
-
-// Behaviours
-export const incrementCounter = createAction('incrementCounter');
-
-export const showAlert = createAction('showAlert');

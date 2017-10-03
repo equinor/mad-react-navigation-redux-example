@@ -5,22 +5,9 @@ import {
   takeEvery,
   race,
 } from 'redux-saga/effects';
-import {
-  Alert,
-} from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import * as actions from '../actions';
-import * as Api from '../services/api';
 
-
-function* showAlert(action) {
-  const { title, message } = action.payload;
-  yield call(Alert.alert, title, message);
-}
-
-function* watchShowAlert() {
-  yield takeEvery(actions.showAlert.toString(), showAlert);
-}
 
 // DefaultPage
 
@@ -139,7 +126,6 @@ function* watchGoToMeetingRoomLookupLabel() {
 
 export default function* sagas() {
   yield [
-    watchShowAlert(),
     watchGoToMeetingRoomSearch(),
     watchGoToMeetingRoomScanLabel(),
     watchGoToMeetingRoomLookupLabel(),
