@@ -87,6 +87,14 @@ function* askToSearchForMeetingRoom(okGen, cancelGen) {
   }
 }
 
+function displayToast(message) {
+  Alert.alert(
+    message,
+    '',
+    { cancelable: false },
+  );
+}
+
 function* popToRoute(route) {
   const nav = yield select(state => state.nav);
   const screenIndex = nav.routes.findIndex(screen => screen.routeName === route);
@@ -140,6 +148,8 @@ function* goToMeetingRoomLookupLabel() {
           yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
 
           yield popToRoute('Default');
+
+          yield displayToast('Congratulations, you have just completed your first saga!');
         }());
       }());
     }, function* cancel() {
