@@ -1,4 +1,5 @@
 import {
+  select,
   call,
   put,
   take,
@@ -86,6 +87,20 @@ function* askToSearchForMeetingRoom(okGen, cancelGen) {
   }
 }
 
+function* popToRoute(route) {
+  const nav = yield select(state => state.nav);
+  const screenIndex = nav.routes.findIndex(screen => screen.routeName === route);
+
+  if (screenIndex !== -1) {
+    const nextScreenIndex = screenIndex + 1;
+    if (nextScreenIndex < nav.routes.length) {
+      const fromScreenKey = nav.routes[nextScreenIndex].key;
+
+      yield put(NavigationActions.back({ key: fromScreenKey }));
+    }
+  }
+}
+
 
 // Scenarios
 
@@ -123,6 +138,8 @@ function* goToMeetingRoomLookupLabel() {
           if (reportMeetingRoomBack) { yield handleSearchMeetingRoom(); return; }
 
           yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
+
+          yield popToRoute('Default');
         }());
       }());
     }, function* cancel() {
