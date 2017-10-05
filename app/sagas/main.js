@@ -67,7 +67,7 @@ function* waitForReportMeetingRoomActions() {
   return { reportMeetingRoomBack: true };
 }
 
-function* askToSearchForMeetingRoom(okGen, cancelGen) {
+function* askToSearchForMeetingRoom() {
   const result = yield new Promise((resolve) => {
     Alert.alert(
       'Equipment is not connected to a meeting room',
@@ -81,10 +81,10 @@ function* askToSearchForMeetingRoom(okGen, cancelGen) {
   });
 
   if (result) {
-    yield okGen();
-  } else {
-    yield cancelGen();
+    return { acceptedSearchMeetingRoom: true };
   }
+
+  return { deniedSearchMeetingRoom: true };
 }
 
 function displayToast(message) {
@@ -132,29 +132,28 @@ function* goToMeetingRoomLookupLabel() {
     const { label, lookupLabelBack } = yield waitForLookupLabelActions();
     if (lookupLabelBack) { return; }
 
-    yield askToSearchForMeetingRoom(function* ok() {
-      yield showSearchMeetingRoom();
+    const { deniedSearchMeetingRoom } = yield askToSearchForMeetingRoom();
+    if (deniedSearchMeetingRoom) { yield handleLookupLabel(); return; }
 
-      yield (function* handleSearchMeetingRoom() {
-        const { meetingRoom, searchMeetingRoomBack } = yield waitForSearchMeetingRoomActions();
-        if (searchMeetingRoomBack) { yield handleLookupLabel(); return; }
+    yield showSearchMeetingRoom();
 
-        yield showReportMeetingRoom(meetingRoom, label);
+    yield (function* handleSearchMeetingRoom() {
+      const { meetingRoom, searchMeetingRoomBack } = yield waitForSearchMeetingRoomActions();
+      if (searchMeetingRoomBack) { yield handleLookupLabel(); return; }
 
-        yield (function* handleReportMeetingRoom() {
-          const { completed, reportMeetingRoomBack } = yield waitForReportMeetingRoomActions();
-          if (reportMeetingRoomBack) { yield handleSearchMeetingRoom(); return; }
+      yield showReportMeetingRoom(meetingRoom, label);
 
-          yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
+      yield (function* handleReportMeetingRoom() {
+        const { completed, reportMeetingRoomBack } = yield waitForReportMeetingRoomActions();
+        if (reportMeetingRoomBack) { yield handleSearchMeetingRoom(); return; }
 
-          yield popToRoute('Default');
+        yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
 
-          yield displayToast('Congratulations, you have just completed your first saga!');
-        }());
+        yield popToRoute('Default');
+
+        yield displayToast('Congratulations, you have just completed your first saga!');
       }());
-    }, function* cancel() {
-      yield handleLookupLabel();
-    });
+    }());
   }());
 }
 
