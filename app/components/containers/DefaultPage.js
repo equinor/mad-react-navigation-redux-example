@@ -14,7 +14,13 @@ import MIcon from 'react-native-vector-icons/MaterialIcons';
 import RoundedSquareIcon from '../atoms/RoundedSquareIcon';
 import BasicCell from '../atoms/BasicCell';
 import * as colors from '../../stylesheets/colors';
-import * as actions from '../../actions';
+import {
+  defaultPageGoToMeetingRoomSearch,
+  defaultPageGoToMeetingRoomScanLabel,
+  defaultPageGoToMeetingRoomLookupLabel,
+  defaultPageGoToEquipmentScanLabel,
+  defaultPageGoToEquipmentLookupLabel,
+} from '../../actions';
 
 
 const styles = StyleSheet.create({
@@ -49,19 +55,19 @@ class DefaultPage extends Component {
             <BasicCell
               cellImageView={<RoundedSquareIcon backgroundColor={colors.PINK} icon={<Icon name="ios-pin" size={17} color="white" />} style={{ marginRight }} />}
               title="Search meeting room"
-              onPress={() => this.props.dispatch(actions.goToMeetingRoomSearch())}
+              onPress={() => this.props.dispatch(defaultPageGoToMeetingRoomSearch())}
               accessory="DisclosureIndicator"
             />
             <BasicCell
               cellImageView={<RoundedSquareIcon backgroundColor={colors.PINK} icon={<Icon name="md-camera" size={17} color="white" />} style={{ marginRight }} />}
               title="Scan yellow label"
-              onPress={() => this.props.dispatch(actions.goToMeetingRoomScanLabel())}
+              onPress={() => this.props.dispatch(defaultPageGoToMeetingRoomScanLabel())}
               accessory="DisclosureIndicator"
             />
             <BasicCell
               cellImageView={<RoundedSquareIcon backgroundColor={colors.PINK} icon={<MIcon name="label-outline" size={17} color="white" />} style={{ marginRight }} />}
               title="Look up yellow label"
-              onPress={() => this.props.dispatch(actions.goToMeetingRoomLookupLabel())}
+              onPress={() => this.props.dispatch(defaultPageGoToMeetingRoomLookupLabel())}
               accessory="DisclosureIndicator"
             />
           </Section>
@@ -73,13 +79,13 @@ class DefaultPage extends Component {
             <BasicCell
               cellImageView={<RoundedSquareIcon backgroundColor={colors.PINK} icon={<Icon name="md-camera" size={17} color="white" />} style={{ marginRight }} />}
               title="Scan yellow label"
-              onPress={() => this.props.dispatch(actions.goToEquipmentScanLabel())}
+              onPress={() => this.props.dispatch(defaultPageGoToEquipmentScanLabel())}
               accessory="DisclosureIndicator"
             />
             <BasicCell
               cellImageView={<RoundedSquareIcon backgroundColor={colors.PINK} icon={<MIcon name="label-outline" size={17} color="white" />} style={{ marginRight }} />}
               title="Look up yellow label"
-              onPress={() => this.props.dispatch(actions.goToEquipmentLookupLabel())}
+              onPress={() => this.props.dispatch(defaultPageGoToEquipmentLookupLabel())}
               accessory="DisclosureIndicator"
             />
           </Section>

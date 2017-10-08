@@ -3,22 +3,25 @@ import {
   put,
   takeLatest,
 } from 'redux-saga/effects';
-import * as actions from '../actions';
-import * as Api from '../services/api';
+import {
+  searchMeetingRoomPageSearchTextChanged,
+  searchMeetingRoomPageSearchResultUpdated,
+} from '../actions';
+import { getMeetingRooms } from '../services/api';
 
 
-function* searchMeetingRoomTextChanged(action) {
+function* updateSearchResult(action) {
   const { searchTerm } = action.payload;
-  const meetingRooms = yield call(Api.getMeetingRooms, searchTerm);
-  yield put(actions.searchMeetingRoomListUpdated({ meetingRooms }));
+  const meetingRooms = yield call(getMeetingRooms, searchTerm);
+  yield put(searchMeetingRoomPageSearchResultUpdated({ meetingRooms }));
 }
 
-function* watchSearchMeetingRoomTextChanged() {
-  yield takeLatest(actions.searchMeetingRoomTextChanged.toString(), searchMeetingRoomTextChanged);
+function* watchSearchTextChanged() {
+  yield takeLatest(searchMeetingRoomPageSearchTextChanged.toString(), updateSearchResult);
 }
 
 export default function* sagas() {
   yield [
-    watchSearchMeetingRoomTextChanged(),
+    watchSearchTextChanged(),
   ];
 }

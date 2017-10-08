@@ -7,7 +7,9 @@ import {
   Button,
 } from 'react-native';
 import { connect } from 'react-redux';
-import * as actions from '../../actions';
+import {
+  reportMeetingRoomPageSendReport,
+} from '../../actions';
 
 
 const styles = StyleSheet.create({
@@ -20,7 +22,7 @@ const styles = StyleSheet.create({
 });
 
 
-class MeetingRoomPage extends Component {
+class ReportMeetingRoomPage extends Component {
   static navigationOptions = {
     title: 'Meeting room',
   };
@@ -28,7 +30,7 @@ class MeetingRoomPage extends Component {
   static propTypes = {
     label: PropTypes.string.isRequired,
     meetingRoom: PropTypes.string.isRequired,
-    report: PropTypes.func.isRequired,
+    sendReport: PropTypes.func.isRequired,
   };
 
   render() {
@@ -36,14 +38,14 @@ class MeetingRoomPage extends Component {
       <View style={styles.container}>
         <Text>Label: {this.props.label}</Text>
         <Text>Meeting room: {this.props.meetingRoom}</Text>
-        <Button title="Submit" onPress={() => this.props.report()} />
+        <Button title="Submit" onPress={() => this.props.sendReport()} />
       </View>
     );
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  report: () => dispatch(actions.report()),
+  sendReport: () => dispatch(reportMeetingRoomPageSendReport()),
 });
 
 const mapStateToProps = (state, ownProps) => {
@@ -58,4 +60,4 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MeetingRoomPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ReportMeetingRoomPage);

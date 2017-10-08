@@ -6,7 +6,9 @@ import {
   Button,
 } from 'react-native';
 import { connect } from 'react-redux';
-import * as actions from '../../actions';
+import {
+  lookupLabelPageLookupLabel,
+} from '../../actions';
 
 
 const styles = StyleSheet.create({
@@ -39,7 +41,7 @@ class LookupPage extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  lookupLabel: label => dispatch(actions.lookupLabel({ label })),
+  lookupLabel: label => dispatch(lookupLabelPageLookupLabel({ label })),
 });
 
 export default connect(null, mapDispatchToProps)(LookupPage);

@@ -1,8 +1,8 @@
 import { handleActions } from 'redux-actions';
 import {
-  searchMeetingRoomTextChanged,
-  searchMeetingRoomTextClear,
-  searchMeetingRoomListUpdated,
+  searchMeetingRoomPageSearchTextChanged,
+  searchMeetingRoomPageSearchTextClear,
+  searchMeetingRoomPageSearchResultUpdated,
 } from '../actions';
 
 
@@ -13,15 +13,15 @@ const initialState = {
 
 
 export default handleActions({
-  [searchMeetingRoomTextChanged]: (state, action) => ({
+  [searchMeetingRoomPageSearchTextChanged]: (state, action) => ({
     ...state,
     searchTerm: action.payload.searchTerm,
   }),
-  [searchMeetingRoomTextClear]: state => ({
+  [searchMeetingRoomPageSearchTextClear]: state => ({
     ...state,
     ...initialState,
   }),
-  [searchMeetingRoomListUpdated]: (state, action) => ({
+  [searchMeetingRoomPageSearchResultUpdated]: (state, action) => ({
     ...state,
     meetingRooms: action.payload.meetingRooms,
   }),
