@@ -13,7 +13,10 @@ import {
 } from 'react-native-tableview-simple';
 import { connect } from 'react-redux';
 import BasicCell from '../atoms/BasicCell';
-import * as actions from '../../actions';
+import {
+  searchMeetingRoomPageSearchTextChanged,
+  searchMeetingRoomPageMeetingRoomSelected,
+} from '../../actions';
 import { getMeetingRooms } from '../../reducers/searchMeetingRoom';
 
 
@@ -48,8 +51,8 @@ class SearchMeetingRoomPage extends Component {
 
   static propTypes = {
     meetingRooms: PropTypes.array.isRequired,
-    searchMeetingRoomTextChanged: PropTypes.func.isRequired,
-    searchMeetingRoomSelected: PropTypes.func.isRequired,
+    searchTextChanged: PropTypes.func.isRequired,
+    meetingRoomSelected: PropTypes.func.isRequired,
   };
 
   render() {
@@ -61,7 +64,7 @@ class SearchMeetingRoomPage extends Component {
           <TextInput
             autoFocus
             placeholder="Search for meeting room"
-            onChangeText={text => this.props.searchMeetingRoomTextChanged(text)}
+            onChangeText={text => this.props.searchTextChanged(text)}
             style={styles.searchBar}
           />
         </View>
@@ -73,7 +76,7 @@ class SearchMeetingRoomPage extends Component {
                   <BasicCell
                     key={meetingRoom.id}
                     title={meetingRoom.title}
-                    onPress={() => this.props.searchMeetingRoomSelected(meetingRoom.id)}
+                    onPress={() => this.props.meetingRoomSelected(meetingRoom.id)}
                     accessory="DisclosureIndicator"
                   />
                 ))}
@@ -91,8 +94,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  searchMeetingRoomTextChanged: searchTerm => dispatch(actions.searchMeetingRoomTextChanged({ searchTerm })),
-  searchMeetingRoomSelected: meetingRoom => dispatch(actions.searchMeetingRoomSelected({ meetingRoom })),
+  searchTextChanged: searchTerm => dispatch(searchMeetingRoomPageSearchTextChanged({ searchTerm })),
+  meetingRoomSelected: meetingRoom => dispatch(searchMeetingRoomPageMeetingRoomSelected({ meetingRoom })),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchMeetingRoomPage);

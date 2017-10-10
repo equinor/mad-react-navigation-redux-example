@@ -6,7 +6,9 @@ import {
   Button,
 } from 'react-native';
 import { connect } from 'react-redux';
-import * as actions from '../../actions';
+import {
+  scanLabelPageLabelRecognized,
+} from '../../actions';
 
 
 const styles = StyleSheet.create({
@@ -38,7 +40,7 @@ class ScanLabelPage extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  labelRecognized: label => dispatch(actions.labelRecognized({ label })),
+  labelRecognized: label => dispatch(scanLabelPageLabelRecognized({ label })),
 });
 
 export default connect(null, mapDispatchToProps)(ScanLabelPage);

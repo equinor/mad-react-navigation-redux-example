@@ -3,7 +3,10 @@ import {
   take,
   select,
 } from 'redux-saga/effects';
-import * as actions from '../actions';
+import {
+  pageNavigationPageWillAppear,
+  pageNavigationPageWillDisappear,
+} from '../actions';
 
 
 // TODO: Move previousRoute to store (by listening for PageNavigation/PAGE_WILL_APPEAR actions)
@@ -19,8 +22,8 @@ function* watchPageNavigation() {
     const currentRoute = navigation.routes[navigation.index].routeName;
 
     if (previousRoute !== currentRoute) {
-      yield put(actions.pageNavigationPageWillDisappear(previousRoute));
-      yield put(actions.pageNavigationPageWillAppear(currentRoute));
+      yield put(pageNavigationPageWillDisappear(previousRoute));
+      yield put(pageNavigationPageWillAppear(currentRoute));
 
       previousRoute = currentRoute;
     }

@@ -10,7 +10,15 @@ import {
   Alert,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import * as actions from '../actions';
+import {
+  defaultPageGoToMeetingRoomSearch,
+  defaultPageGoToMeetingRoomScanLabel,
+  defaultPageGoToMeetingRoomLookupLabel,
+  searchMeetingRoomPageMeetingRoomSelected,
+  scanLabelPageLabelRecognized,
+  lookupLabelPageLookupLabel,
+  reportMeetingRoomPageSendReport,
+} from '../actions';
 
 
 // Boilerplate
@@ -30,7 +38,7 @@ function* showReportMeetingRoom(meetingRoom, label) {
 
 function* waitForLookupLabelActions() {
   const { proceed } = yield race({
-    proceed: take(actions.lookupLabel),
+    proceed: take(lookupLabelPageLookupLabel),
     back: take(NavigationActions.BACK),
   });
 
@@ -43,7 +51,7 @@ function* waitForLookupLabelActions() {
 
 function* waitForSearchMeetingRoomActions() {
   const { proceed } = yield race({
-    proceed: take(actions.searchMeetingRoomSelected),
+    proceed: take(searchMeetingRoomPageMeetingRoomSelected),
     back: take(NavigationActions.BACK),
   });
 
@@ -56,7 +64,7 @@ function* waitForSearchMeetingRoomActions() {
 
 function* waitForReportMeetingRoomActions() {
   const { proceed } = yield race({
-    proceed: take(actions.report),
+    proceed: take(reportMeetingRoomPageSendReport),
     back: take(NavigationActions.BACK),
   });
 
@@ -119,7 +127,7 @@ function* goToMeetingRoomSearch() {
 function* goToMeetingRoomScanLabel() {
   yield put(NavigationActions.navigate({ routeName: 'ScanLabel' }));
 
-  const action = yield take(actions.labelRecognized);
+  const action = yield take(scanLabelPageLabelRecognized);
   const label = action.payload.label;
 
   yield put(NavigationActions.navigate({ routeName: 'MeetingRoom', params: { label } }));
@@ -161,15 +169,15 @@ function* goToMeetingRoomLookupLabel() {
 // Watches
 
 function* watchGoToMeetingRoomSearch() {
-  yield takeEvery(actions.goToMeetingRoomSearch, goToMeetingRoomSearch);
+  yield takeEvery(defaultPageGoToMeetingRoomSearch, goToMeetingRoomSearch);
 }
 
 function* watchGoToMeetingRoomScanLabel() {
-  yield takeEvery(actions.goToMeetingRoomScanLabel, goToMeetingRoomScanLabel);
+  yield takeEvery(defaultPageGoToMeetingRoomScanLabel, goToMeetingRoomScanLabel);
 }
 
 function* watchGoToMeetingRoomLookupLabel() {
-  yield takeEvery(actions.goToMeetingRoomLookupLabel, goToMeetingRoomLookupLabel);
+  yield takeEvery(defaultPageGoToMeetingRoomLookupLabel, goToMeetingRoomLookupLabel);
 }
 
 
