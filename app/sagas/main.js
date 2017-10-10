@@ -7,6 +7,9 @@ import {
   race,
 } from 'redux-saga/effects';
 import {
+  delay,
+} from 'redux-saga';
+import {
   Alert,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
@@ -23,18 +26,37 @@ import {
 
 // Boilerplate
 
-function* showLookupLabel() {
-  yield put(NavigationActions.navigate({ routeName: 'LookupLabel' }));
-}
-
 function* showSearchMeetingRoom() {
   yield put(NavigationActions.navigate({ routeName: 'SearchMeetingRoom' }));
+}
+
+function* showScanLabel() {
+  yield put(NavigationActions.navigate({ routeName: 'ScanLabel' }));
+}
+
+function* showLookupLabel() {
+  yield put(NavigationActions.navigate({ routeName: 'LookupLabel' }));
 }
 
 function* showReportMeetingRoom(meetingRoom, label) {
   yield put(NavigationActions.navigate({ routeName: 'ReportMeetingRoom', params: { meetingRoom, label } }));
 }
 
+function* waitForScanLabelActions() {
+  const { labelRecognized, showHelp } = yield race({
+    labelRecognized: take(scanLabelPageLabelRecognized),
+    showHelp: call(delay, 2000),
+    back: take(NavigationActions.BACK),
+  });
+
+  if (labelRecognized) {
+    return { label: labelRecognized.payload.label };
+  } else if (showHelp) {
+    return { showHelp: true };
+  }
+
+  return { scanLabelBack: true };
+}
 
 function* waitForLookupLabelActions() {
   const { proceed } = yield race({
@@ -73,6 +95,26 @@ function* waitForReportMeetingRoomActions() {
   }
 
   return { reportMeetingRoomBack: true };
+}
+
+function* askToDoManualLookup() {
+  const result = yield new Promise((resolve) => {
+    Alert.alert(
+      'Scanning trouble?',
+      'Want to try the manual lookup instead?',
+      [
+        { text: 'Continue scanning', onPress: () => resolve(false), style: 'cancel' },
+        { text: 'Go to lookup', onPress: () => resolve(true) },
+      ],
+      { cancelable: false },
+    );
+  });
+
+  if (result) {
+    return { goToLookup: true };
+  }
+
+  return { continueScanning: true };
 }
 
 function* askToSearchForMeetingRoom() {
