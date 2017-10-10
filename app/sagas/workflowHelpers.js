@@ -39,7 +39,7 @@ export function* showReportMeetingRoom(label, meetingRoom) {
 }
 
 
-// Waiting
+// Waiting for actions
 
 export function* waitForScanLabelActions() {
   const { labelRecognized, showHelp } = yield race({
