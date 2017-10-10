@@ -1,3 +1,5 @@
+/* eslint no-use-before-define: 0 */
+
 import {
   select,
   call,
@@ -38,8 +40,8 @@ function* showLookupLabel() {
   yield put(NavigationActions.navigate({ routeName: 'LookupLabel' }));
 }
 
-function* showReportMeetingRoom(meetingRoom, label) {
-  yield put(NavigationActions.navigate({ routeName: 'ReportMeetingRoom', params: { meetingRoom, label } }));
+function* showReportMeetingRoom(label, meetingRoom) {
+  yield put(NavigationActions.navigate({ routeName: 'ReportMeetingRoom', params: { label, meetingRoom } }));
 }
 
 function* waitForScanLabelActions() {
@@ -55,7 +57,7 @@ function* waitForScanLabelActions() {
     return { showHelp: true };
   }
 
-  return { scanLabelBack: true };
+  return { back: true };
 }
 
 function* waitForLookupLabelActions() {
@@ -68,7 +70,7 @@ function* waitForLookupLabelActions() {
     return { label: proceed.payload.label };
   }
 
-  return { lookupLabelBack: true };
+  return { back: true };
 }
 
 function* waitForSearchMeetingRoomActions() {
@@ -81,7 +83,7 @@ function* waitForSearchMeetingRoomActions() {
     return { meetingRoom: proceed.payload.meetingRoom };
   }
 
-  return { searchMeetingRoomBack: true };
+  return { back: true };
 }
 
 function* waitForReportMeetingRoomActions() {
@@ -94,7 +96,7 @@ function* waitForReportMeetingRoomActions() {
     return { completed: true }; // TODO: Implement
   }
 
-  return { reportMeetingRoomBack: true };
+  return { back: true };
 }
 
 function* askToDoManualLookup() {
@@ -130,11 +132,7 @@ function* askToSearchForMeetingRoom() {
     );
   });
 
-  if (result) {
-    return { acceptedSearchMeetingRoom: true };
-  }
-
-  return { deniedSearchMeetingRoom: true };
+  return result;
 }
 
 function displayToast(message) {
@@ -160,51 +158,96 @@ function* popToRoute(route) {
 }
 
 
-// Scenarios
+// Workflows
 
 function* goToMeetingRoomSearch() {
   yield put(NavigationActions.navigate({ routeName: 'SearchMeetingRoom' }));
 }
 
 function* goToMeetingRoomScanLabel() {
-  yield put(NavigationActions.navigate({ routeName: 'ScanLabel' }));
+  yield showScanLabel();
 
-  const action = yield take(scanLabelPageLabelRecognized);
-  const label = action.payload.label;
-
-  yield put(NavigationActions.navigate({ routeName: 'MeetingRoom', params: { label } }));
+  yield handleScanLabel();
 }
 
-function* goToMeetingRoomLookupLabel() {
-  yield showLookupLabel();
+function* handleScanLabel() {
+  const { label, showHelp, back } = yield waitForScanLabelActions();
 
-  yield (function* handleLookupLabel() {
-    const { label, lookupLabelBack } = yield waitForLookupLabelActions();
-    if (lookupLabelBack) { return; }
+  if (label) {
+    yield performMeetingRoomLookup(label, handleScanLabel);
+  } else if (showHelp) {
+    const { goToLookup, continueScanning } = yield askToDoManualLookup();
 
-    const { deniedSearchMeetingRoom } = yield askToSearchForMeetingRoom();
-    if (deniedSearchMeetingRoom) { yield handleLookupLabel(); return; }
+    if (goToLookup) {
+      yield showLookupLabel();
 
-    yield showSearchMeetingRoom();
+      yield handleLookupLabel();
+    } else if (continueScanning) {
+      yield handleScanLabel();
+    }
+  } else if (back) {
+    // Just return to default page
+  }
+}
 
-    yield (function* handleSearchMeetingRoom() {
-      const { meetingRoom, searchMeetingRoomBack } = yield waitForSearchMeetingRoomActions();
-      if (searchMeetingRoomBack) { yield handleLookupLabel(); return; }
+function* handleLookupLabel() {
+  const { label, back } = yield waitForLookupLabelActions();
 
-      yield showReportMeetingRoom(meetingRoom, label);
+  if (label) {
+    yield performMeetingRoomLookup(label, handleLookupLabel);
+  } else if (back) {
+    yield handleScanLabel();
+  }
+}
 
-      yield (function* handleReportMeetingRoom() {
-        const { completed, reportMeetingRoomBack } = yield waitForReportMeetingRoomActions();
-        if (reportMeetingRoomBack) { yield handleSearchMeetingRoom(); return; }
+function* performMeetingRoomLookup(label, previousPageHandler) {
+  // TODO: Call real API
+  const isConnectedToMeetingRoom = yield call(() => label === '765432');
 
-        yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
+  if (isConnectedToMeetingRoom) {
+    const meetingRoom = 'MEETING ROOM FROM API';
+    yield showReportMeetingRoom(label, meetingRoom);
 
-        yield popToRoute('Default');
+    yield handleReportMeetingRoom(label, meetingRoom, previousPageHandler);
+  } else {
+    const shouldSearchForMeetingRooom = yield askToSearchForMeetingRoom();
 
-        yield displayToast('Congratulations, you have just completed your first saga!');
-      }());
-    }());
-  }());
+    if (shouldSearchForMeetingRooom) {
+      yield showSearchMeetingRoom();
+
+      yield handleSearchMeetingRoom(label, previousPageHandler);
+    } else {
+      yield previousPageHandler();
+    }
+  }
+}
+
+function* handleSearchMeetingRoom(label, previousPageHandler) {
+  const { meetingRoom, back } = yield waitForSearchMeetingRoomActions();
+
+  if (meetingRoom) {
+    yield showReportMeetingRoom(label, meetingRoom);
+
+    yield handleReportMeetingRoom(label, meetingRoom, function* backHandler() {
+      yield handleSearchMeetingRoom(previousPageHandler);
+    });
+  } else if (back) {
+    yield previousPageHandler();
+  }
+}
+
+function* handleReportMeetingRoom(label, meetingRoom, previousPageHandler) {
+  const { completed, back } = yield waitForReportMeetingRoomActions();
+
+  if (completed) {
+    yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
+
+    yield popToRoute('Default');
+
+    yield displayToast('Congratulations, you have just completed your first saga!');
+  } else if (back) {
+    yield previousPageHandler();
+  }
 }
 
 
@@ -219,7 +262,7 @@ function* watchGoToMeetingRoomScanLabel() {
 }
 
 function* watchGoToMeetingRoomLookupLabel() {
-  yield takeEvery(defaultPageGoToMeetingRoomLookupLabel, goToMeetingRoomLookupLabel);
+  // yield takeEvery(defaultPageGoToMeetingRoomLookupLabel, goToMeetingRoomLookupLabel);
 }
 
 
