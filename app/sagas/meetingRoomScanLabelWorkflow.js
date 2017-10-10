@@ -19,9 +19,16 @@ import {
 
 
 export default function* goToMeetingRoomScanLabel() {
-  yield showScanLabel();
+  try {
+    yield showScanLabel();
 
-  yield handleScanLabel();
+    yield handleScanLabel();
+  } catch (err) {
+    // TODO: Add proper error handling
+    yield popToRoute('Default');
+
+    yield displayToast('An error occurred');
+  }
 }
 
 function* handleScanLabel() {
