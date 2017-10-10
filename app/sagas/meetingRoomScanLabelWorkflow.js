@@ -101,11 +101,9 @@ function* handleReportMeetingRoom(label, meetingRoom, previousPageHandler) {
   const { completed, back } = yield waitForReportMeetingRoomActions();
 
   if (completed) {
-    yield call(console.log, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
-
     yield popToRoute('Default');
 
-    yield displayToast('Congratulations, you have just completed your first saga!');
+    yield call(displayToast, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
   } else if (back) {
     yield previousPageHandler();
   }
