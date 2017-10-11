@@ -68,7 +68,7 @@ function* performMeetingRoomLookup(state, handlePreviousPage) {
   const isConnectedToMeetingRoom = yield call(() => state.label === '765432');
 
   if (isConnectedToMeetingRoom) {
-    const meetingRoom = 'MEETING ROOM FROM API';
+    const meetingRoom = 'MEETING ROOM FROM API'; // TODO: Need to get from real API
     yield showReportMeetingRoom(state.label, meetingRoom);
 
     yield handleReportMeetingRoom({ ...state, meetingRoom }, handlePreviousPage);
@@ -91,7 +91,7 @@ function* handleSearchMeetingRoom(state, handlePreviousPage) {
   if (meetingRoom) {
     yield showReportMeetingRoom(state.label, meetingRoom);
 
-    yield handleReportMeetingRoom(state, function* backHandler(backState) {
+    yield handleReportMeetingRoom({ ...state, meetingRoom }, function* backHandler(backState) {
       yield handleSearchMeetingRoom(backState, handlePreviousPage);
     });
   } else if (back) {
