@@ -90,7 +90,7 @@ function* handleSearchMeetingRoom(label, previousPageHandler) {
     yield showReportMeetingRoom(label, meetingRoom);
 
     yield handleReportMeetingRoom(label, meetingRoom, function* backHandler() {
-      yield handleSearchMeetingRoom(previousPageHandler);
+      yield handleSearchMeetingRoom(label, previousPageHandler);
     });
   } else if (back) {
     yield previousPageHandler();
