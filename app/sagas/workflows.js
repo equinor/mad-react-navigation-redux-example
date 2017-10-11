@@ -6,21 +6,21 @@ import {
   defaultPageGoToMeetingRoomScanLabel,
   defaultPageGoToMeetingRoomLookupLabel,
 } from '../actions';
-import goToMeetingRoomScanLabel from './meetingRoomScanLabelWorkflow';
+import startMeetingRoomScanLabelWorkflow from './meetingRoomScanLabelWorkflow';
 
 
 // Watches
 
 function* watchGoToMeetingRoomSearch() {
-  // yield takeEvery(defaultPageGoToMeetingRoomSearch, goToMeetingRoomSearch);
+  // yield takeEvery(defaultPageGoToMeetingRoomSearch, startMeetingRoomSearchWorkflow);
 }
 
 function* watchGoToMeetingRoomScanLabel() {
-  yield takeEvery(defaultPageGoToMeetingRoomScanLabel, goToMeetingRoomScanLabel);
+  yield takeEvery(defaultPageGoToMeetingRoomScanLabel, startMeetingRoomScanLabelWorkflow);
 }
 
 function* watchGoToMeetingRoomLookupLabel() {
-  // yield takeEvery(defaultPageGoToMeetingRoomLookupLabel, goToMeetingRoomLookupLabel);
+  // yield takeEvery(defaultPageGoToMeetingRoomLookupLabel, startMeetingRoomLookupLabelWorkflow);
 }
 
 

@@ -18,7 +18,7 @@ import {
 } from './workflowHelpers';
 
 
-export default function* goToMeetingRoomScanLabel() {
+export default function* startMeetingRoomScanLabelWorkflow() {
   try {
     yield showScanLabel();
 
