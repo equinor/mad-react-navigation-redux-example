@@ -41,10 +41,10 @@ export function* showReportMeetingRoom(label, meetingRoom) {
 
 // Waiting for actions
 
-export function* waitForScanLabelActions() {
+export function* waitForScanLabelActions(hasShownHelp) {
   const { labelRecognized, showHelp } = yield race({
     labelRecognized: take(scanLabelPageLabelRecognized),
-    showHelp: call(delay, 2000),
+    ...(!hasShownHelp ? { showHelp: call(delay, 2000) } : {}),
     back: take(NavigationActions.BACK),
   });
 

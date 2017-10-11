@@ -22,7 +22,7 @@ export default function* goToMeetingRoomScanLabel() {
   try {
     yield showScanLabel();
 
-    yield handleScanLabel();
+    yield handleScanLabel({});
   } catch (err) {
     // TODO: Add proper error handling
     yield popToRoute('Default');
@@ -31,80 +31,82 @@ export default function* goToMeetingRoomScanLabel() {
   }
 }
 
-function* handleScanLabel() {
-  const { label, showHelp, back } = yield waitForScanLabelActions();
+function* handleScanLabel(state) {
+  const { label, showHelp, back } = yield waitForScanLabelActions(state.hasShownHelp);
 
   if (label) {
-    yield performMeetingRoomLookup(label, handleScanLabel);
+    yield performMeetingRoomLookup({ ...state, label }, handleScanLabel);
   } else if (showHelp) {
     const { goToLookup, continueScanning } = yield askToDoManualLookup();
+
+    const newState = { ...state, hasShownHelp: true };
 
     if (goToLookup) {
       yield showLookupLabel();
 
-      yield handleLookupLabel();
+      yield handleLookupLabel(newState);
     } else if (continueScanning) {
-      yield handleScanLabel();
+      yield handleScanLabel(newState);
     }
   } else if (back) {
     // Just return to default page
   }
 }
 
-function* handleLookupLabel() {
+function* handleLookupLabel(state) {
   const { label, back } = yield waitForLookupLabelActions();
 
   if (label) {
-    yield performMeetingRoomLookup(label, handleLookupLabel);
+    yield performMeetingRoomLookup({ ...state, label }, handleLookupLabel);
   } else if (back) {
-    yield handleScanLabel();
+    yield handleScanLabel(state);
   }
 }
 
-function* performMeetingRoomLookup(label, previousPageHandler) {
+function* performMeetingRoomLookup(state, handlePreviousPage) {
   // TODO: Call real API
-  const isConnectedToMeetingRoom = yield call(() => label === '765432');
+  const isConnectedToMeetingRoom = yield call(() => state.label === '765432');
 
   if (isConnectedToMeetingRoom) {
     const meetingRoom = 'MEETING ROOM FROM API';
-    yield showReportMeetingRoom(label, meetingRoom);
+    yield showReportMeetingRoom(state.label, meetingRoom);
 
-    yield handleReportMeetingRoom(label, meetingRoom, previousPageHandler);
+    yield handleReportMeetingRoom({ ...state, meetingRoom }, handlePreviousPage);
   } else {
     const shouldSearchForMeetingRooom = yield askToSearchForMeetingRoom();
 
     if (shouldSearchForMeetingRooom) {
       yield showSearchMeetingRoom();
 
-      yield handleSearchMeetingRoom(label, previousPageHandler);
+      yield handleSearchMeetingRoom(state, handlePreviousPage);
     } else {
-      yield previousPageHandler();
+      yield handlePreviousPage(state);
     }
   }
 }
 
-function* handleSearchMeetingRoom(label, previousPageHandler) {
+function* handleSearchMeetingRoom(state, handlePreviousPage) {
   const { meetingRoom, back } = yield waitForSearchMeetingRoomActions();
 
   if (meetingRoom) {
-    yield showReportMeetingRoom(label, meetingRoom);
+    yield showReportMeetingRoom(state.label, meetingRoom);
 
-    yield handleReportMeetingRoom(label, meetingRoom, function* backHandler() {
-      yield handleSearchMeetingRoom(label, previousPageHandler);
+    yield handleReportMeetingRoom(state, function* backHandler(backState) {
+      yield handleSearchMeetingRoom(backState, handlePreviousPage);
     });
   } else if (back) {
-    yield previousPageHandler();
+    yield handlePreviousPage(state);
   }
 }
 
-function* handleReportMeetingRoom(label, meetingRoom, previousPageHandler) {
+function* handleReportMeetingRoom(state, handlePreviousPage) {
   const { completed, back } = yield waitForReportMeetingRoomActions();
 
   if (completed) {
     yield popToRoute('Default');
 
-    yield call(displayToast, `MeetingRoom selected ${meetingRoom} for equipment ${label} (Result: ${completed})`);
+    yield call(displayToast, `MeetingRoom selected ${state.meetingRoom} for equipment ${state.label} (Result: ${completed})`);
   } else if (back) {
-    yield previousPageHandler();
+    yield handlePreviousPage(state);
   }
 }
