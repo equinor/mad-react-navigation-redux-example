@@ -58,38 +58,38 @@ export function* waitForScanLabelActions(hasShownHelp) {
 }
 
 export function* waitForLookupLabelActions() {
-  const { proceed } = yield race({
-    proceed: take(lookupLabelPageLookupLabel),
+  const { lookupLabel } = yield race({
+    lookupLabel: take(lookupLabelPageLookupLabel),
     back: take(NavigationActions.BACK),
   });
 
-  if (proceed) {
-    return { label: proceed.payload.label };
+  if (lookupLabel) {
+    return { label: lookupLabel.payload.label };
   }
 
   return { back: true };
 }
 
 export function* waitForSearchMeetingRoomActions() {
-  const { proceed } = yield race({
-    proceed: take(searchMeetingRoomPageMeetingRoomSelected),
+  const { meetingRoomSelected } = yield race({
+    meetingRoomSelected: take(searchMeetingRoomPageMeetingRoomSelected),
     back: take(NavigationActions.BACK),
   });
 
-  if (proceed) {
-    return { meetingRoom: proceed.payload.meetingRoom };
+  if (meetingRoomSelected) {
+    return { meetingRoom: meetingRoomSelected.payload.meetingRoom };
   }
 
   return { back: true };
 }
 
 export function* waitForReportMeetingRoomActions() {
-  const { proceed } = yield race({
-    proceed: take(reportMeetingRoomPageSendReport),
+  const { sendReport } = yield race({
+    sendReport: take(reportMeetingRoomPageSendReport),
     back: take(NavigationActions.BACK),
   });
 
-  if (proceed) {
+  if (sendReport) {
     return { completed: true }; // TODO: Implement
   }
 
