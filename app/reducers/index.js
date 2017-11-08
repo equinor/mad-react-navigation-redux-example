@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { navReducer } from '../navigation';
+import { navReducer } from '../redux-navigation';
 import searchMeetingRoom from './searchMeetingRoom';
 
 

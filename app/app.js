@@ -7,13 +7,11 @@ import createSagaMiddleware from 'redux-saga';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import reducers from './reducers';
 import sagas from './sagas';
-import AppNavigator from './navigation';
+import AppNavigator from './redux-navigation';
 
 const sagaMiddleware = createSagaMiddleware();
 
-const store = createStore(reducers, composeWithDevTools(
-  applyMiddleware(sagaMiddleware),
-));
+const store = createStore(reducers, composeWithDevTools(applyMiddleware(sagaMiddleware)));
 
 sagaMiddleware.run(sagas);
 
